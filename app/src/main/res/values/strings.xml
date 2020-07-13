@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">MotorBike Control</string>
+    <string name="bike_data_title">Datos Motocicleta</string>
+    <string name="plate_title">Placa de vehículo</string>
+    <string name="driver_title">Nombre Conductor</string>
+    <string name="initial_km_title">Kilometraje inicial</string>
+    <string name="final_km_title">Kilometraje final</string>
+    <string name="initial_km_data_hint">Km inicial</string>
+    <string name="final_km_data_hint">Km final</string>
+    <string name="show_register">Mostrar registro</string>
+    <string name="check_Network">Verificar red</string>
+    <string name="save_data">Guardar registro</string>
+    <string name="clean_data">Borrar todo</string>
+    <string name="synchro_data">Sincronizar datos</string>
+</resources>

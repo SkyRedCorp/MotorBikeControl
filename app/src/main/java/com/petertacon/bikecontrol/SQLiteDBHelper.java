@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.content.Context;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,13 +46,15 @@ public class SQLiteDBHelper extends SQLiteOpenHelper {
 
     public void initialDBWrite() {
         SQLiteDatabase Tintalle = this.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put(BIKE_COLUMN_DRIVER, "Carlos Torres");
-        values.put(BIKE_COLUMN_PLATE, "LRX44A");
-        values.put(BIKE_COLUMN_KMINITIAL, "0001");
-        values.put(BIKE_COLUMN_KMFINAL, "0002");
-        Tintalle.insert(BIKE_TABLE_NAME, null, values);
-        Tintalle.close();
+        if (Tintalle == null) {
+            ContentValues values = new ContentValues();
+            values.put(BIKE_COLUMN_DRIVER, "Carlos Torres");
+            values.put(BIKE_COLUMN_PLATE, "LRX44A");
+            values.put(BIKE_COLUMN_KMINITIAL, "0001");
+            values.put(BIKE_COLUMN_KMFINAL, "0002");
+            Tintalle.insert(BIKE_TABLE_NAME, null, values);
+            Tintalle.close();
+        }
     }
 
 

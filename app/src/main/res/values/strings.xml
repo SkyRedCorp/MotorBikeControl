@@ -11,5 +11,16 @@
     <string name="check_Network">Verificar red</string>
     <string name="save_data">Guardar registro</string>
     <string name="clean_data">Borrar todo</string>
-    <string name="synchro_data">Sincronizar datos</string>
+    <string name="synchro_data">Sync Datos</string>
+    <string name="settings_title">Configuraciones</string>
+    <string name="settings_IDDevice">ID Device</string>
+    <string name="settings_Client">Cliente</string>
+    <string name="settings_Password">Contraseña</string>
+    <string name="settings_saveData">Guardar</string>
+    <string name="settings_exitActivity">Salir</string>
+    <string name="hint_IDDevice">Ingresa el ID</string>
+    <string name="hint_Client">Ingresa el cliente</string>
+    <string name="hint_Password">Ingresa la contraseña</string>
+    <string name="login_activity">Config</string>
+    <string name="login_dialog">Acceder</string>
 </resources>

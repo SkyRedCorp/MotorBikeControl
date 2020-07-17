@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "137874150719",
+    "firebase_url": "https://motorbike-control.firebaseio.com",
+    "project_id": "motorbike-control",
+    "storage_bucket": "motorbike-control.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:137874150719:android:32dfe95afa351942832f8a",
+        "android_client_info": {
+          "package_name": "com.petertacon.bikecontrol"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "137874150719-1416qq2setihp39qff7becen6jou0v1p.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDch1APLE6c7_YMLUIj2MpdJmjswBNvSpo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "137874150719-1416qq2setihp39qff7becen6jou0v1p.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

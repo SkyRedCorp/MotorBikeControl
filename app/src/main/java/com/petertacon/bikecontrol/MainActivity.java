@@ -3,9 +3,13 @@ package com.petertacon.bikecontrol;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Dialog;
+import android.content.BroadcastReceiver;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
@@ -28,6 +32,9 @@ import static com.petertacon.bikecontrol.SQLiteDBHelper.BIKE_TABLE_NAME;
 
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
+    SharedPreferences preferencias = null;
+    private BroadcastReceiver Titas = null;
+
     Spinner plate, driver;
     EditText KmInitial, KmFinal;
     Button showData, saveData, checkNet, cleanData, syncData;
@@ -38,6 +45,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        Titas = new Titas();
 
         //spinner
         plate = findViewById(R.id.spPlate);
@@ -62,19 +71,39 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         //firedata = FirebaseDatabase.getInstance().getReference();
 
-        loadInitialData();
         loadPlateData();
         loadDriverData();
         loadinitKm();
         loadlastKm();
 
+        preferencias = getSharedPreferences("com.petertacon.bikecontrol", MODE_PRIVATE);
+        if (preferencias.getBoolean("firstrun", true)) {
+            preferencias.edit().putBoolean("firstrun", false).apply();
+            SQLiteDBHelper LeoZion = new SQLiteDBHelper((getApplicationContext()));
+            LeoZion.initialDBWrite();
+        }
 
     }
 
-    private void loadInitialData() {
-        SQLiteDBHelper basedatos = new SQLiteDBHelper((getApplicationContext()));
-        basedatos.initialDBWrite();
+    public void onClickCheckNet(View view) {
+        checkNet.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                broadcastIntent();
+            }
+        });
     }
+
+    public void broadcastIntent() {
+        registerReceiver(Titas, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        unregisterReceiver(Titas);
+    }
+
 
     private void loadPlateData() {
         SQLiteDBHelper basedatos = new SQLiteDBHelper(getApplicationContext());
@@ -97,29 +126,29 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     }
 
     private void loadinitKm() {
-        SQLiteDatabase Janeatus = new SQLiteDBHelper(this).getReadableDatabase();
+        SQLiteDatabase StickDead = new SQLiteDBHelper(this).getReadableDatabase();
         String queryData = " SELECT " + BIKE_COLUMN_KMINITIAL + " FROM " + BIKE_TABLE_NAME + " ORDER BY " + BIKE_COLUMN_KMINITIAL +" DESC LIMIT 1";
-        Cursor cursor = Janeatus.rawQuery(queryData, null);
+        Cursor cursor = StickDead.rawQuery(queryData, null);
         if (cursor.moveToFirst()) {
             do {
                 KmInitial.setText(cursor.getString(0));
             } while (cursor.moveToNext());
         }
         cursor.close();
-        Janeatus.close();
+        StickDead.close();
     }
 
     private void loadlastKm() {
-        SQLiteDatabase Janeatus = new SQLiteDBHelper(this).getReadableDatabase();
+        SQLiteDatabase Janeateus = new SQLiteDBHelper(this).getReadableDatabase();
         String queryData = " SELECT " + BIKE_COLUMN_KMFINAL + " FROM " + BIKE_TABLE_NAME + " ORDER BY " + BIKE_COLUMN_KMFINAL +" DESC LIMIT 1";
-        Cursor cursor = Janeatus.rawQuery(queryData, null);
+        Cursor cursor = Janeateus.rawQuery(queryData, null);
         if (cursor.moveToFirst()) {
             do {
                 KmFinal.setText(cursor.getString(0));
             } while (cursor.moveToNext());
         }
         cursor.close();
-        Janeatus.close();
+        Janeateus.close();
     }
 
     @Override
@@ -181,6 +210,5 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
 
     }
-
 
 }

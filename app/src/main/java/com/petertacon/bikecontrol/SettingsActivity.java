@@ -11,16 +11,15 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import static com.petertacon.bikecontrol.SQLiteDBHelper.BIKE_COLUMN_KMFINAL;
-import static com.petertacon.bikecontrol.SQLiteDBHelper.BIKE_COLUMN_KMINITIAL;
 import static com.petertacon.bikecontrol.SQLiteDBHelper.BIKE_COLUMN_DRIVER;
+import static com.petertacon.bikecontrol.SQLiteDBHelper.BIKE_COLUMN_PASSWORD;
 import static com.petertacon.bikecontrol.SQLiteDBHelper.BIKE_COLUMN_PLATE;
 import static com.petertacon.bikecontrol.SQLiteDBHelper.BIKE_TABLE_NAME;
 
 public class SettingsActivity extends AppCompatActivity {
 
     Button exitActivity, saveData;
-    EditText idDevice, client, password;
+    EditText driver, plate, password;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,11 +28,11 @@ public class SettingsActivity extends AppCompatActivity {
 
         exitActivity = findViewById(R.id.btnExit);
         saveData = findViewById(R.id.btnSave);
-        idDevice = findViewById(R.id.txtIDDevice);
-        client = findViewById(R.id.txtClient);
+        driver = findViewById(R.id.txtDriver);
+        plate = findViewById(R.id.txtPlate);
         password = findViewById(R.id.txtPassword);
 
-        loadInitialData();
+        //loadInitialData();
     }
 
     private void loadInitialData() {
@@ -54,20 +53,25 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     private void saveToDB() {
-        SQLiteDatabase gamindarte = new SQLiteDBHelper(this).getReadableDatabase();
+        SQLiteDatabase gamindarte = new SQLiteDBHelper(this).getWritableDatabase();
         ContentValues valores = new ContentValues();
 
-        valores.put(BIKE_COLUMN_DRIVER, idDevice.getText().toString());
-        valores.put(BIKE_COLUMN_PLATE, client.getText().toString());
-        valores.put(BIKE_COLUMN_KMFINAL, password.getText().toString());
+        valores.put(BIKE_COLUMN_DRIVER, driver.getText().toString());
+        valores.put(BIKE_COLUMN_PLATE, plate.getText().toString());
+        valores.put(BIKE_COLUMN_PASSWORD, password.getText().toString());
 
-        gamindarte.update(BIKE_TABLE_NAME, valores, null, null);
+        gamindarte.insert(BIKE_TABLE_NAME, null, valores);
         Toast.makeText(SettingsActivity.this, "Datos guardados: " + valores, Toast.LENGTH_LONG).show();
         gamindarte.close();
     }
 
     public void onClick(View view) {
         saveToDB();
+    }
+
+    @Override
+    public void onBackPressed(){
+        // usado para evitar que cierre la app
     }
 
 }

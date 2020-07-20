@@ -5,13 +5,13 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.content.Context;
-import android.widget.Toast;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class SQLiteDBHelper extends SQLiteOpenHelper {
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 4;
     public static final String DATABASE_NAME = "BikeControl";
     public static final String BIKE_TABLE_NAME = "KmControl";
     public static final String BIKE_COLUMN_ID = "_id";
@@ -19,12 +19,12 @@ public class SQLiteDBHelper extends SQLiteOpenHelper {
     public static final String BIKE_COLUMN_PLATE = "Plate";
     public static final String BIKE_COLUMN_KMINITIAL = "KmInitial";
     public static final String BIKE_COLUMN_KMFINAL = "KmFinal";
+    public static final String BIKE_COLUMN_PASSWORD = "Password";
 
 
     public SQLiteDBHelper(Context contexto) {
         super(contexto, DATABASE_NAME, null, DATABASE_VERSION);
     }
-
 
     @Override
     public void onCreate(SQLiteDatabase basedatos) {
@@ -33,9 +33,8 @@ public class SQLiteDBHelper extends SQLiteOpenHelper {
                 + BIKE_COLUMN_DRIVER + " TEXT, "
                 + BIKE_COLUMN_PLATE + " TEXT, "
                 + BIKE_COLUMN_KMINITIAL + " INT, "
-                + BIKE_COLUMN_KMFINAL + " INT" + ")");
-
-
+                + BIKE_COLUMN_KMFINAL + " INT, "
+                + BIKE_COLUMN_PASSWORD + " INT" + ")");
     }
 
     @Override
@@ -46,34 +45,21 @@ public class SQLiteDBHelper extends SQLiteOpenHelper {
 
     public void initialDBWrite() {
         SQLiteDatabase Tintalle = this.getWritableDatabase();
-        if (Tintalle == null) {
-            ContentValues values = new ContentValues();
-            values.put(BIKE_COLUMN_DRIVER, "Carlos Torres");
-            values.put(BIKE_COLUMN_PLATE, "LRX44A");
-            values.put(BIKE_COLUMN_KMINITIAL, "0001");
-            values.put(BIKE_COLUMN_KMFINAL, "0002");
-            Tintalle.insert(BIKE_TABLE_NAME, null, values);
-            Tintalle.close();
-        }
-    }
-
-
-    public void insertLabel(String label) {
-        SQLiteDatabase basedatos = this.getWritableDatabase();
         ContentValues values = new ContentValues();
-        values.put(BIKE_COLUMN_PLATE, label);
-        values.put(BIKE_COLUMN_DRIVER, label);
-
-        basedatos.insert(BIKE_TABLE_NAME, null, values);
-        basedatos.close();
+        values.put(BIKE_COLUMN_DRIVER, "Carlos Torres");
+        values.put(BIKE_COLUMN_PLATE, "LRX44A");
+        values.put(BIKE_COLUMN_KMINITIAL, "0001");
+        values.put(BIKE_COLUMN_KMFINAL, "0002");
+        values.put(BIKE_COLUMN_PASSWORD, "123456");
+        Tintalle.insert(BIKE_TABLE_NAME, null, values);
+        Tintalle.close();
     }
 
     public List<String> getPlateLabel() {
         List<String> plateList = new ArrayList<>();
-
         String queryData = " SELECT " + BIKE_COLUMN_PLATE + " FROM " + BIKE_TABLE_NAME;
-        SQLiteDatabase basedatos = this.getReadableDatabase();
-        Cursor cursor = basedatos.rawQuery(queryData, null);
+        SQLiteDatabase JCheetos = this.getReadableDatabase();
+        Cursor cursor = JCheetos.rawQuery(queryData, null);
 
         if (cursor.moveToFirst()) {
             do {
@@ -81,16 +67,37 @@ public class SQLiteDBHelper extends SQLiteOpenHelper {
             } while (cursor.moveToNext());
         }
         cursor.close();
-        basedatos.close();
+        JCheetos.close();
         return plateList;
+    }
+
+    public List<String> loadData() {
+        List<String> dataList = new ArrayList<>();
+        SQLiteDatabase JamTemplar = this.getReadableDatabase();
+        String queryData = "SELECT * " + " FROM " + BIKE_TABLE_NAME + " ORDER BY " + BIKE_COLUMN_ID + " DESC LIMIT 10";
+        Cursor cursor = JamTemplar.rawQuery(queryData, null);
+        if (cursor.moveToFirst()) {
+            do {
+                //ID.setText(cursor.getString(1));
+                //Password.setText(cursor.getString(3));
+                //Client.setText(cursor.getString(2));
+                Log.d("TAG", cursor.getString(0) + " " +
+                        cursor.getString(1) + " " +
+                        cursor.getString(2) + " " +
+                        cursor.getString(3));
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        JamTemplar.close();
+        return dataList;
     }
 
     public List<String> getDriverLabel() {
         List<String> driverList = new ArrayList<>();
 
         String queryData = " SELECT " + BIKE_COLUMN_DRIVER + " FROM " + BIKE_TABLE_NAME;
-        SQLiteDatabase basedatos = this.getReadableDatabase();
-        Cursor cursor = basedatos.rawQuery(queryData, null);
+        SQLiteDatabase SkyRed = this.getReadableDatabase();
+        Cursor cursor = SkyRed.rawQuery(queryData, null);
 
         if (cursor.moveToFirst()) {
             do {
@@ -98,7 +105,7 @@ public class SQLiteDBHelper extends SQLiteOpenHelper {
             } while (cursor.moveToNext());
         }
         cursor.close();
-        basedatos.close();
+        SkyRed.close();
         return driverList;
     }
 

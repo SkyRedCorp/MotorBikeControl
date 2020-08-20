@@ -109,4 +109,24 @@ public class SQLiteDBHelper extends SQLiteOpenHelper {
         return driverList;
     }
 
+    public SkyRed Authenticate(SkyRed skyRed) {
+        SQLiteDatabase JCheetos = this.getReadableDatabase();
+        String query = "SELECT * " + " FROM " + BIKE_TABLE_NAME + " ORDER BY " +
+                BIKE_COLUMN_ID + " DESC LIMIT 1";
+        Cursor cursor = JCheetos.rawQuery(query, null);
+
+        if (cursor.moveToFirst()) {
+            SkyRed skyRed1 = new SkyRed(cursor.getString(1), cursor.getString(2),
+                    cursor.getString(5));
+            if (skyRed.password.equalsIgnoreCase(skyRed1.password)) {
+                return skyRed1;
+            }
+            //System.out.println(skyRed1);
+            cursor.close();
+            JCheetos.close();
+        }
+        return null;
+    }
+
+
 }

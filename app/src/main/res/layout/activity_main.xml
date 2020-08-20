@@ -3,18 +3,18 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity" >
+    tools:context=".MainActivity">
 
     <LinearLayout
         android:id="@+id/lyDataTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/txtBDataTitle"
         android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginStart="24dp"
+        android:layout_marginStart="12dp"
         android:layout_marginTop="12dp"
-        android:layout_marginEnd="24dp"
+        android:layout_marginEnd="12dp"
         android:orientation="horizontal">
 
         <TextView
@@ -33,17 +33,6 @@
             android:text="@string/driver_title" />
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/txtBDataTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="24dp"
-        android:text="@string/bike_data_title"
-        android:textSize="18sp" />
-
     <LinearLayout
         android:id="@+id/lySpinner"
         android:layout_width="wrap_content"
@@ -51,9 +40,9 @@
         android:layout_below="@+id/lyDataTitle"
         android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="24dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="12dp"
         android:orientation="horizontal">
 
         <Spinner
@@ -69,27 +58,16 @@
             android:layout_weight="1" />
     </LinearLayout>
 
-    <Space
-        android:id="@+id/space1"
-        android:layout_width="wrap_content"
-        android:layout_height="50dp"
-        android:layout_below="@+id/lySpinner"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="12dp"
-        android:layout_marginEnd="24dp" />
-
     <LinearLayout
         android:id="@+id/lyKmTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/space1"
+        android:layout_below="@id/lySpinner"
         android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginStart="24dp"
+        android:layout_marginStart="12dp"
         android:layout_marginTop="12dp"
-        android:layout_marginEnd="24dp"
+        android:layout_marginEnd="12dp"
         android:orientation="horizontal">
 
         <TextView
@@ -114,9 +92,9 @@
         android:layout_below="@+id/lyKmTitle"
         android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="24dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="12dp"
         android:orientation="horizontal">
 
         <EditText
@@ -124,46 +102,35 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:autofillHints=""
             android:ems="10"
             android:hint="@string/initial_km_data_hint"
             android:inputType="number"
-            android:textSize="14sp"
-            android:autofillHints="" />
+            android:textSize="14sp" />
 
         <EditText
             android:id="@+id/txtKmFinData"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:autofillHints=""
             android:ems="10"
             android:hint="@string/final_km_data_hint"
             android:inputType="number"
-            android:textSize="14sp"
-            android:autofillHints="" />
+            android:textSize="14sp" />
     </LinearLayout>
-
-    <Space
-        android:id="@+id/space2"
-        android:layout_width="wrap_content"
-        android:layout_height="50dp"
-        android:layout_below="@+id/lyKmData"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="12dp"
-        android:layout_marginEnd="24dp" />
 
     <LinearLayout
         android:id="@+id/lyButton1"
         style="buttonBarStyle"
         android:layout_width="wrap_content"
-        android:layout_height="60dp"
-        android:layout_below="@+id/space2"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/lyKmData"
         android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="12dp"
-        android:layout_marginEnd="24dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="12dp"
         android:orientation="horizontal">
 
         <Button
@@ -172,6 +139,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            android:onClick="onOpenRegisterClick"
             android:text="@string/show_register" />
 
         <Button
@@ -180,7 +148,6 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:onClick="onClickCheckNet"
             android:text="@string/check_Network" />
 
         <Button
@@ -189,19 +156,20 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            android:onClick="onSaveClick"
             android:text="@string/save_data" />
     </LinearLayout>
 
     <LinearLayout
         android:id="@+id/lyButton2"
         android:layout_width="wrap_content"
-        android:layout_height="60dp"
+        android:layout_height="wrap_content"
         android:layout_below="@+id/lyButton1"
         android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="12dp"
-        android:layout_marginEnd="24dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="12dp"
         android:orientation="horizontal">
 
         <Button
@@ -210,6 +178,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            android:onClick="onCleanClick"
             android:text="@string/clean_data" />
 
         <Button
@@ -230,18 +199,5 @@
             android:text="@string/login_activity" />
 
     </LinearLayout>
-
-    <TextView
-        android:id="@+id/txtObservations"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/lyButton2"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="12dp"
-        android:layout_marginEnd="24dp"
-        android:layout_marginBottom="24dp" />
 
 </RelativeLayout>

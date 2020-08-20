@@ -3,13 +3,9 @@ package com.petertacon.bikecontrol;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Dialog;
-import android.content.BroadcastReceiver;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
@@ -18,11 +14,9 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.IgnoreExtraProperties;
 
 import java.util.List;
 
@@ -30,23 +24,22 @@ import static com.petertacon.bikecontrol.SQLiteDBHelper.BIKE_COLUMN_KMFINAL;
 import static com.petertacon.bikecontrol.SQLiteDBHelper.BIKE_COLUMN_KMINITIAL;
 import static com.petertacon.bikecontrol.SQLiteDBHelper.BIKE_TABLE_NAME;
 
-public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
+/*** Clase tipo Activity en la cual estará la interfaz de Configuraciones ***/
 
-    SharedPreferences preferencias = null;
-    private BroadcastReceiver Titas = null;
+public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
     Spinner plate, driver;
     EditText KmInitial, KmFinal;
     Button showData, saveData, checkNet, cleanData, syncData;
-    TextView observer;
     private DatabaseReference firedata;
 
+    SQLiteDBHelper database;
+
+    /*** Método usado para creación de Activity ***/
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        Titas = new Titas();
 
         //spinner
         plate = findViewById(R.id.spPlate);
@@ -64,47 +57,43 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         syncData = findViewById(R.id.btnSync);
 
         //TextView
-        observer = findViewById(R.id.txtObservations);
 
         plate.setOnItemSelectedListener(this);
         driver.setOnItemSelectedListener(this);
 
+        database = new SQLiteDBHelper(this);
+
         //firedata = FirebaseDatabase.getInstance().getReference();
 
+
+        //función usada para determinar si hay un primer inicio de app
+        //para cargar datos iniciales en SQLite
+        Boolean isFirstRun = getSharedPreferences("PREFERENCE", MODE_PRIVATE)
+                .getBoolean("isFirstRun", true);
+
+        //condicional para verificar en SharedPreferences
+        if (isFirstRun) {
+            SQLiteDBHelper LeoZion = new SQLiteDBHelper((getApplicationContext()));
+            LeoZion.initialDBWrite();
+            Toast.makeText(MainActivity.this, "Datos cargados. Clave inicial:  123456", Toast.LENGTH_LONG).show();
+        }
+        getSharedPreferences("PREFERENCE", MODE_PRIVATE).edit()
+                .putBoolean("isFirstRun", false).apply();
+
+        //Carga de métodos donde se cargan los datos de la tabla
         loadPlateData();
         loadDriverData();
         loadinitKm();
         loadlastKm();
-
-        preferencias = getSharedPreferences("com.petertacon.bikecontrol", MODE_PRIVATE);
-        if (preferencias.getBoolean("firstrun", true)) {
-            preferencias.edit().putBoolean("firstrun", false).apply();
-            SQLiteDBHelper LeoZion = new SQLiteDBHelper((getApplicationContext()));
-            LeoZion.initialDBWrite();
-        }
-
     }
 
-    public void onClickCheckNet(View view) {
-        checkNet.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                broadcastIntent();
-            }
-        });
-    }
-
-    public void broadcastIntent() {
-        registerReceiver(Titas, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
-    }
-
+    // Método usado para pausa de Activity
     @Override
     protected void onPause() {
         super.onPause();
-        unregisterReceiver(Titas);
     }
 
-
+    // Métodos usados para carga de datos en Spinner y EditText
     private void loadPlateData() {
         SQLiteDBHelper basedatos = new SQLiteDBHelper(getApplicationContext());
         List<String> plateList = basedatos.getPlateLabel();
@@ -140,7 +129,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     private void loadlastKm() {
         SQLiteDatabase Janeateus = new SQLiteDBHelper(this).getReadableDatabase();
-        String queryData = " SELECT " + BIKE_COLUMN_KMFINAL + " FROM " + BIKE_TABLE_NAME + " ORDER BY " + BIKE_COLUMN_KMFINAL +" DESC LIMIT 1";
+        String queryData = " SELECT " + BIKE_COLUMN_KMFINAL + " FROM " + BIKE_TABLE_NAME +
+                " ORDER BY " + BIKE_COLUMN_KMFINAL +" DESC LIMIT 1";
         Cursor cursor = Janeateus.rawQuery(queryData, null);
         if (cursor.moveToFirst()) {
             do {
@@ -161,25 +151,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     }
 
-    @IgnoreExtraProperties
-    public class FireData {
-        public String driver;
-        public String plate;
-
-        public FireData() {
-
-        }
-        public FireData(String driver, String plate) {
-            this.driver = driver;
-            this.plate = plate;
-        }
-    }
-
-    private void writeNewData (String userId, String driver, String plate) {
-        FireData fireData = new FireData(driver, plate);
-        firedata.child("Data").child(userId).setValue(fireData);
-    }
-
+    // Método usado para apertura de diálogo de contraseña
     public void onLoginClick(View v) {
         final Dialog loginDialog = new Dialog(this, R.style.Theme_AppCompat_Dialog);
         loginDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -190,13 +162,20 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         (loginDialog.findViewById(R.id.btnExit)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-              String clave = ((EditText) loginDialog.findViewById(R.id.txtPassword)).getText().toString();
-                if (clave.equals("123456")) {
+                EditText txtPass;
+                txtPass = loginDialog.findViewById(R.id.txtPassword);
+                String clave = txtPass.getText().toString();
+                SkyRed authPass = database.Authenticate(new SkyRed(null, null, clave));
+
+                if (authPass != null) {
                     Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
                     startActivity(intent);
-                    Toast.makeText(MainActivity.this, "Login Correcto", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, "Login Correcto",
+                            Toast.LENGTH_SHORT).show();
                 }else {
-                    Toast.makeText(MainActivity.this, "Login Incorrecto", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, "Login Incorrecto",
+                            Toast.LENGTH_SHORT).show();
+                     txtPass.setText("");
                 }
             }
         });
@@ -208,7 +187,42 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             }
         });
 
-
     }
 
+    //método usado para limpiar campos
+    public void onCleanClick(View v) {
+        cleanData.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                KmInitial.setText(" ");
+                KmFinal.setText(" ");
+            }
+        });
+    }
+
+    //método usado para guardar los datos registrados
+    public void onSaveClick(View v) {
+        saveData.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int kmInitial = Integer.parseInt(KmInitial.getText().toString());
+                int kmFinal = Integer.parseInt( KmFinal.getText().toString());
+                if (kmInitial > kmFinal) {
+                    Toast.makeText(MainActivity.this,
+                            "El valor inicial, debe ser menor que el final",
+                            Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+    }
+
+    public void onOpenRegisterClick(View v) {
+        showData.setOnClickListener(new View.OnClickListener() {
+            final Intent intent = new Intent(MainActivity.this, RegisterActivity.class);
+            @Override
+            public void onClick(View v) {
+                startActivity(intent);
+            }
+        });
+    }
 }

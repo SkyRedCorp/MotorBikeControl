@@ -16,42 +16,43 @@ import static com.petertacon.bikecontrol.SQLiteDBHelper.BIKE_COLUMN_PASSWORD;
 import static com.petertacon.bikecontrol.SQLiteDBHelper.BIKE_COLUMN_PLATE;
 import static com.petertacon.bikecontrol.SQLiteDBHelper.BIKE_TABLE_NAME;
 
+
+/*** Clase tipo Activity en la cual estará la interfaz de Configuraciones ***/
+
 public class SettingsActivity extends AppCompatActivity {
 
+    //Interfaz usada
     Button exitActivity, saveData;
     EditText driver, plate, password;
 
+    //Método usado al momento de crear el Activity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
 
+        //Asignación de botones y textview con archivo XML
         exitActivity = findViewById(R.id.btnExit);
         saveData = findViewById(R.id.btnSave);
         driver = findViewById(R.id.txtDriver);
         plate = findViewById(R.id.txtPlate);
         password = findViewById(R.id.txtPassword);
 
-        //loadInitialData();
     }
 
-    private void loadInitialData() {
-        SQLiteDBHelper Insectosarus = new SQLiteDBHelper((getApplicationContext()));
-        Insectosarus.initialDBWrite();
-    }
-
+    //Método usado para salir de app
     public void onExitClick (View v) {
-        Intent intent = new Intent(SettingsActivity.this, MainActivity.class);
-        startActivity(intent);
+        final Intent intent = new Intent(SettingsActivity.this, MainActivity.class);
+        //Click Listener para comunicar botón
         exitActivity.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(SettingsActivity.this, MainActivity.class);
                 startActivity(intent);
             }
         });
     }
 
+    //Método usado para guardar registro en SQLite
     private void saveToDB() {
         SQLiteDatabase gamindarte = new SQLiteDBHelper(this).getWritableDatabase();
         ContentValues valores = new ContentValues();
@@ -64,6 +65,7 @@ public class SettingsActivity extends AppCompatActivity {
         Toast.makeText(SettingsActivity.this, "Datos guardados: " + valores, Toast.LENGTH_LONG).show();
         gamindarte.close();
     }
+
 
     public void onClick(View view) {
         saveToDB();

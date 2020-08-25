@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
@@ -28,10 +29,12 @@ import static com.petertacon.bikecontrol.SQLiteDBHelper.BIKE_TABLE_NAME;
 
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
+    //definición inicial de campos a usar
     Spinner plate, driver;
     EditText KmInitial, KmFinal;
-    Button showData, saveData, checkNet, cleanData, syncData;
+    Button showData, saveData, cleanData, syncData;
     private DatabaseReference firedata;
+    String driverText, plateText, KMInitial, KMFinal;
 
     SQLiteDBHelper database;
 
@@ -52,15 +55,14 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         //Button
         showData = findViewById(R.id.btnQuery);
         saveData = findViewById(R.id.btnSaveData);
-        checkNet = findViewById(R.id.btnChkNet);
         cleanData = findViewById(R.id.btnClearData);
         syncData = findViewById(R.id.btnSync);
 
         //TextView
-
         plate.setOnItemSelectedListener(this);
         driver.setOnItemSelectedListener(this);
 
+        //Base de datos
         database = new SQLiteDBHelper(this);
 
         //firedata = FirebaseDatabase.getInstance().getReference();
@@ -143,12 +145,16 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-
+        if(parent.getId() == R.id.spPlate) {
+            plateText = plate.getSelectedItem().toString();
+        } else if ( parent.getId() == R.id.spDriver) {
+            driverText = driver.getSelectedItem().toString();
+        } 
     }
 
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
-
+        Toast.makeText(MainActivity.this, "Seleccione Conductor y Placa",Toast.LENGTH_LONG).show();
     }
 
     // Método usado para apertura de diálogo de contraseña
@@ -205,13 +211,43 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         saveData.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                int kmInitial = Integer.parseInt(KmInitial.getText().toString());
-                int kmFinal = Integer.parseInt( KmFinal.getText().toString());
-                if (kmInitial > kmFinal) {
-                    Toast.makeText(MainActivity.this,
-                            "El valor inicial, debe ser menor que el final",
-                            Toast.LENGTH_LONG).show();
+                // Se usa Try para manejo de excepción de formato Numérico
+                try {
+                    //Conversión de String a Integer
+                    int kmInitial = Integer.parseInt(KmInitial.getText().toString());
+                    int kmFinal = Integer.parseInt(KmFinal.getText().toString());
+
+                    // Condicional para verificar que Valor inicial sea menor al valor final
+                    if (kmInitial > kmFinal) {
+                        KmInitial.setError("El valor inicial, debe ser menor al final");
+                        KmInitial.setText("");
+                        KmFinal.setText("");
+                    } else {
+                        //Carga de datos a SQLite
+                        KMInitial = KmInitial.getText().toString();
+                        KMFinal = KmFinal.getText().toString();
+                        boolean SaveData = database.BikeRegister(new WTacon(plateText, driverText,
+                                KMInitial, KMFinal));
+                        if (SaveData) {
+                            Toast.makeText(MainActivity.this, "Registro Guardado.",
+                                    Toast.LENGTH_SHORT).show();
+                            KmInitial.setText("");
+                            KmFinal.setText("");
+                        } else {
+                            Toast.makeText(MainActivity.this, "Error en registro.",
+                                    Toast.LENGTH_SHORT).show();
+                            KmInitial.setText("");
+                            KmFinal.setText("");
+                        }
+                    }
+                    // En caso de que algún campo esté vacío
+                }catch (NumberFormatException nfe) {
+                    KmInitial.setError("Inserte Datos");
+                    KmFinal.setError("Inserte Datos");
+                    KmInitial.setText("");
+                    KmFinal.setText("");
                 }
+
             }
         });
     }
@@ -224,5 +260,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 startActivity(intent);
             }
         });
+    }
+
+    @Override
+    public void onBackPressed(){
+        finish();
     }
 }

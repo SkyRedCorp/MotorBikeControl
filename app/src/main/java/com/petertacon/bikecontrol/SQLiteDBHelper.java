@@ -128,5 +128,11 @@ public class SQLiteDBHelper extends SQLiteOpenHelper {
         return null;
     }
 
-
+    public boolean BikeRegister(WTacon wTacon) {
+        //Método usado para guardar registro en SQlite (MainActivity)
+        SQLiteDatabase Lana = this.getWritableDatabase();
+        boolean createSuccesful = Lana.insert(BIKE_TABLE_NAME, null, wTacon.toContentValues()) > 0;
+        Lana.close();
+        return createSuccesful;
+    }
 }

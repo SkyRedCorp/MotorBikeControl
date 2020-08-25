@@ -52,7 +52,7 @@ public class SettingsActivity extends AppCompatActivity {
         });
     }
 
-    //Método usado para guardar registro en SQLite
+    //Método usado para guardar registro en SQLite (Activity de Config)
     private void saveToDB() {
         SQLiteDatabase gamindarte = new SQLiteDBHelper(this).getWritableDatabase();
         ContentValues valores = new ContentValues();

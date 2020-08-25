@@ -1,6 +1,6 @@
 package com.petertacon.bikecontrol;
 
-/*** Clase usada para consulta y escritura de base de datos ***/
+/*** Clase usada para consulta y escritura de base de datos (SettingsActivity) ***/
 
 public class SkyRed {
     //Declarción de atributos
